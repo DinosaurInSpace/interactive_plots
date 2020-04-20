@@ -16,8 +16,8 @@ import argparse
 parser = argparse.ArgumentParser(description='')
 parser.add_argument("-df", default='/Users/dis/PycharmProjects/neutral_loss/databases/db_obs.pickle',
                     type=str, help="Dataframe containing rdkit.Molecule and x, y coordinates")
-parser.add_argument("-X", default='umap_morg_x', type=str, help="Column label for x-axis in df to be plotted")
-parser.add_argument("-Y", default='umap_morg_y', type=str, help="Column label for y-axis in df to be plotted")
+parser.add_argument("-X", default='umap_mm_x', type=str, help="Column label for x-axis in df to be plotted")
+parser.add_argument("-Y", default='umap_mm_y', type=str, help="Column label for y-axis in df to be plotted")
 
 df = pd.read_pickle(parser.parse_args().df)
 x_label_df = parser.parse_args().X
@@ -31,11 +31,11 @@ df = df.rename(columns={x_label_df: 'X', y_label_df: 'Y'})
 # decoy = df.query("is_active == 0")
 
 active = df.query("exptl == True")
-decoy = df.query("exptl == 0")
+decoy = df.query("exptl != True")
 
 graph_component = dcc.Graph(
     id='tsne',
-    config={'displayModeBar': False},
+    config={'displayModeBar': True},
     figure={
         'data': [
             go.Scattergl(
@@ -44,7 +44,7 @@ graph_component = dcc.Graph(
                 mode='markers',
                 opacity=0.7,
                 marker={
-                    'size': 5,
+                    'size': 7,
                     'color': 'orange',
                     'line': {'width': 0.5, 'color': 'white'}
                 },
@@ -56,7 +56,7 @@ graph_component = dcc.Graph(
                 mode='markers',
                 opacity=0.7,
                 marker={
-                    'size': 10,
+                    'size': 7,
                     'color': 'blue',
                     'line': {'width': 0.5, 'color': 'white'}
                 },
@@ -115,7 +115,4 @@ def display_selected_data(selectedData):
 
 
 if __name__ == '__main__':
-    import socket
-    hostname = socket.gethostname()
-    IPAddr = socket.gethostbyname(hostname)    
-    app.run_server(debug=True,host=IPAddr)
+    app.run_server(debug=True, host="127.0.0.1")
